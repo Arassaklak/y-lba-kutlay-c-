@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yılbaşı Sürprizi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@700&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #0a1128, #1a2f5a, #2d4a7c);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .title {
+            font-family: 'Mountains of Christmas', cursive;
+            font-size: 4rem;
+            color: #fff;
+            text-shadow: 0 0 20px #ff6b6b, 0 0 40px #ffd93d;
+            margin-bottom: 2rem;
+            animation: glow 2s ease-in-out infinite;
+            z-index: 10;
+            text-align: center;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 20px #ff6b6b, 0 0 40px #ffd93d; }
+            50% { text-shadow: 0 0 30px #ff6b6b, 0 0 60px #ffd93d, 0 0 80px #ffd93d; }
+        }
+
+        .gift-container {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease, opacity 0.5s ease;
+            z-index: 10;
+        }
+
+        .gift-container:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        /* Resim için (zaten vardı) */
+        .gift-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid #f1c40f;
+            box-shadow: 0 0 30px rgba(241, 196, 15, 0.6), 0 10px 30px rgba(0,0,0,0.5);
+            animation: imageGlow 2s ease-in-out infinite;
+            display: block;
+        }
+
+        @keyframes imageGlow {
+            0%, 100% { box-shadow: 0 0 30px rgba(241, 196, 15, 0.6), 0 10px 30px rgba(0,0,0,0.5); }
+            50% { box-shadow: 0 0 50px rgba(241, 196, 15, 0.9), 0 0 70px rgba(255, 107, 107, 0.5), 0 10px 30px rgba(0,0,0,0.5); }
+        }
+
+        .snowflake {
+            position: absolute;
+            top: -10px;
+            color: white;
+            font-size: 1em;
+            user-select: none;
+            pointer-events: none;
+            animation: fall linear infinite;
+            opacity: 0.8;
+            z-index: 1000;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10px) rotate(0deg);
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .explosion {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: explode 1s ease-out forwards;
+        }
+
+        @keyframes explode {
+            to {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        .message {
+            font-family: 'Pacifico', cursive;
+            font-size: 5rem;
+            color: #fff;
+            text-shadow: 0 0 30px #ff6b6b, 0 0 60px #ffd93d;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            z-index: 100;
+            text-align: center;
+            animation: messageAppear 1s ease-out 0.5s forwards;
+            opacity: 0;
+        }
+
+        @keyframes messageAppear {
+            to {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="title">Yılbaşı Sürprizi</h1>
+
+    <div class="gift-container" id="giftContainer">
+        <!-- Hediye kutusu yerine resim -->
+        <img
+            class="gift-image"
+            alt="Yılbaşı Sürprizi"
+            src="https://raw.githubusercontent.com/Arassaklak/images/refs/heads/main/surpriz.jpg"
+        />
+    </div>
+
+    <div class="message hidden" id="message">Seneye Görüşürüz! 🎉</div>
+
+    <script>
+        // Kar yağışı oluştur
+        function createSnowflakes() {
+            const snowflakeChars = ['❄', '❅', '❆'];
+            for (let i = 0; i < 50; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.className = 'snowflake';
+                snowflake.textContent = snowflakeChars[Math.floor(Math.random() * snowflakeChars.length)];
+                snowflake.style.left = Math.random() * 100 + '%';
+                snowflake.style.fontSize = (Math.random() * 1.5 + 0.5) + 'em';
+                snowflake.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                snowflake.style.animationDelay = Math.random() * 5 + 's';
+                document.body.appendChild(snowflake);
+            }
+        }
+
+        // Patlama efekti
+        function createExplosion(x, y) {
+            const colors = ['#ff6b6b', '#ffd93d', '#4ecdc4', '#95e1d3', '#f38181'];
+            const explosion = document.createElement('div');
+            explosion.className = 'explosion';
+            explosion.style.left = x + 'px';
+            explosion.style.top = y + 'px';
+            document.body.appendChild(explosion);
+
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+                const angle = (Math.PI * 2 * i) / 30;
+                const velocity = 100 + Math.random() * 100;
+                const tx = Math.cos(angle) * velocity;
+                const ty = Math.sin(angle) * velocity;
+
+                particle.style.setProperty('--tx', tx + 'px');
+                particle.style.setProperty('--ty', ty + 'px');
+
+                explosion.appendChild(particle);
+            }
+
+            setTimeout(() => explosion.remove(), 1000);
+        }
+
+        // Patlama sesi oluştur
+        function playExplosionSound() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(20, audioContext.currentTime + 0.5);
+
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+
+        // Resme tıklama
+        document.getElementById('giftContainer').addEventListener('click', function() {
+            const rect = this.getBoundingClientRect();
+            const x = rect.left + rect.width / 2;
+            const y = rect.top + rect.height / 2;
+
+            playExplosionSound();
+            createExplosion(x, y);
+
+            this.style.opacity = '0';
+            this.style.transform = 'scale(0)';
+
+            // Başlık yazısını da gizle
+            document.querySelector('.title').style.opacity = '0';
+            document.querySelector('.title').style.transform = 'scale(0)';
+
+            setTimeout(() => {
+                this.classList.add('hidden');
+                document.querySelector('.title').classList.add('hidden');
+                document.getElementById('message').classList.remove('hidden');
+            }, 500);
+        });
+
+        createSnowflakes();
+    </script>
+</body>
+</html>
